@@ -1,3 +1,4 @@
+#output:id playlist liked video
 def get_id_playlist(youtube,id_channel):
     response = youtube.channels().list(
         id=id_channel,
