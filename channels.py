@@ -10,10 +10,10 @@ def get_id_liked_playlist(youtube,id_channel):
     else:
         return False
 
-def get_user_information(youtube,id_channel):
+'''def get_user_information(youtube,id_channel):
     response = youtube.channels().list(
         id=id_channel,
         part='snippet,contentDetails',
     ).execute()
     print(response)
-    exit()
+    exit()'''

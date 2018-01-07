@@ -1,26 +1,50 @@
 from collections import Counter
 import pygal
 
+
 def labeling(fr):
-    return [i[0] for i in fr.items()]
+    return [i[1] for i in fr]  # I get only nameCategory
 
 
-def compact_data(fr):
-    data=[i[1] for i in fr.items()]
-    n_cat=sum(data)
-    normalized=[i/n_cat for i in data]
+def compact_data(fr,CategoryId):
+    alignment=[]
+    for i in CategoryId:
+        wall=True
+        for j in fr.items():
+            if j[0] == i[1]:
+                alignment.append(j[1])
+                wall=False
+                break
+        if wall:
+            alignment.append(0)
+    n_cat = sum(alignment)
+    normalized = [i / n_cat for i in alignment]
     return normalized
 
 
-fr=Counter({'Gaming': 1350, 'Education': 820, 'Science & Technology': 697, 'Music': 544, 'Entertainment': 388, 'Comedy': 304, 'People & Blogs': 212, 'Film & Animation': 196, 'Pets & Animals': 143, 'News & Politics': 123, 'Howto & Style': 49, 'Nonprofits & Activism': 44, 'Travel & Events': 31, 'Shows': 12, 'Autos & Vehicles': 10, 'Sports': 6})
-fr1=Counter({'Music': 632, 'Gaming': 273, 'Entertainment': 147, 'Comedy': 115, 'People & Blogs': 76, 'Science & Technology': 31, 'Education': 24, 'Howto & Style': 23, 'Film & Animation': 15, 'News & Politics': 4, 'Autos & Vehicles': 4, 'Shows': 3, 'Nonprofits & Activism': 2, 'Travel & Events': 1})
-label=labeling(fr)
-normalized1=compact_data(fr)
-normalized2=compact_data(fr1)
-#fr=Counter(i[3] for i in a)
-radar_chart = pygal.Radar(show_legend=True,fill=True)
-radar_chart.x_labels = label
-radar_chart.add('user1', normalized1)
-radar_chart.add('user2', normalized2)
+def start_radar(videos_info, user,CategoryYoutube):
 
-radar_chart.render_to_file('radar_chart.svg')
+    from pygal.style import Style
+    custom_style = Style(
+    background='black',
+    plot_background='black',
+    foreground='#53E89B',
+    foreground_strong='#53A0E8',
+    foreground_subtle='#630C0D',
+    opacity='.6',
+    opacity_hover='.9',
+    label_font_size=7,
+    transition='400ms ease-in',
+    colors=('#E853A0', '#E8537A', '#E95355', '#E87653', '#E89B53'))
+
+    #from test_area import CategoryYoutube
+    label = labeling(CategoryYoutube)  # Category=IdCategory,nameCategory
+    normalized1 = compact_data(videos_info,CategoryYoutube)
+    # normalized2=compact_data(fr1)
+    # fr=Counter(i[3] for i in a)
+    radar_chart = pygal.Radar(show_legend=True, fill=True,style=custom_style)
+    radar_chart.x_labels = label
+    radar_chart.add('user1', normalized1)
+    # radar_chart.add('user2', normalized2)
+    radar_chart.render_to_file(user + '.svg')
+    return 1
