@@ -1,4 +1,4 @@
-#Output:title, description, id_video, videoPublishedAt, like_data
+#Output:[title, description, videoPublishedAt,category,lang,tags,contentDetails,contentRating]
 def get_playlist_items(youtube, id_videos,videoCategory):
     lang=None
     tags=None
@@ -8,7 +8,7 @@ def get_playlist_items(youtube, id_videos,videoCategory):
         maxResults="50",
         part='snippet,contentDetails'
     ).execute()
-    if response["items"]: #TODO I should to implement a Control function for handle error
+    if response["items"]: 
         item=response["items"][0]
         title = item["snippet"]["title"].encode('utf-8')
         if title != "Deleted video" and title != "Private video" and title:

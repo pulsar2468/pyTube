@@ -1,11 +1,11 @@
 from collections import Counter
 import pygal
 
-
+#Simple function for CategoryYoutube labeling
 def labeling(fr):
     return [i[1] for i in fr]  # I get only nameCategory
 
-
+#Alignment function between Category of user respect to Category Youtube
 def compact_data(fr,CategoryId):
     alignment=[]
     for i in CategoryId:
@@ -22,6 +22,7 @@ def compact_data(fr,CategoryId):
     return normalized
 
 
+#Input CounterCategory of user, name_user, Category of Youtube
 def start_radar(videos_info, user,CategoryYoutube):
 
     from pygal.style import Style
