@@ -54,17 +54,22 @@ def start(youtube,CategoryYoutube):
     except Exception as e:
         print(e)
 
+def last_file(directory):
+    for (root, dirnames, files) in os.walk("data/"+directory):
+        return files[len(files)-1]
+
 
 def each_day(youtube,CategoryYoutube):
     flag=False
     today=datetime.date.today()
-    yesterday=str(datetime.date(today.year,today.month,today.day-1))
+    #yesterday=str(datetime.date(today.year,today.month,today.day-1))
     for (root, dirnames, files) in os.walk("data/"):
         for name in dirnames:
             while True:
                 try:
-                    if os.path.exists("data/"+name+'/'+yesterday) and not os.path.exists("data/"+name+'/'+str(today)):
-                        load_list=open_dataset("data/"+name+'/'+yesterday)
+                    l_file=last_file(name)
+                    if l_file and not os.path.exists("data/"+name+'/'+str(today)):
+                        load_list=open_dataset("data/"+name+'/'+l_file)
                         print("Analyse user: ",name)
                         #for i in load_list:
                         list_item=playlist.get_new_items(youtube,load_list[0][9],load_list[0][8])
