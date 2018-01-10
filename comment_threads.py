@@ -1,11 +1,10 @@
 # Call the API's commentThreads.list method to list the existing comments.
 #output:[publishedAt,author,text,likeCount,authorChannelId])
-def get_comments(youtube, video_id, channel_id=None):
+def get_comments(youtube, video_id):
     comment_list=[]
     response = youtube.commentThreads().list(
         part="snippet",
         videoId=video_id,
-        channelId=channel_id,
         textFormat="plainText",
         maxResults="100",
     ).execute()

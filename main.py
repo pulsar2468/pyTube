@@ -1,5 +1,9 @@
 import os
 from collections import Counter
+
+import httplib2
+import time
+
 import search
 import comment_threads
 import playlist
@@ -24,16 +28,23 @@ DEVELOPER_KEY = 'AIzaSyCDDfCQc7FX1yoX-JUYIpZJUluDx_uP7Y0' #Place here your key!
 YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
 #videos,channel,playlist=search.youtube_search('J.-Ph. Rameau: «Les Surprises de')#query, max_results
+while True:
+    try:
+        #Auth
+        youtube=get_authenticated_service()
+        CategoryYoutube=videoCategory.get_playlist_items(youtube) #Category list from Youtube
+        break
+    except httplib2.ServerNotFoundError as e:
+        print(e)
+        time.sleep(10)
 
-#Auth
-youtube=get_authenticated_service()
-CategoryYoutube=videoCategory.get_playlist_items(youtube) #Category list from Youtube
 if os.path.exists("data"):
     print("Each_day")
     sniffing.each_day(youtube,CategoryYoutube)
 else:
     os.mkdir("data")
     sniffing.start(youtube,CategoryYoutube)
+
 
 
 #a=activities.get_last_activity(youtube,'UCr9oFpE-kIu7MNjKx_aR8dQ')

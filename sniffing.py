@@ -1,5 +1,7 @@
 import pickle
 import datetime
+import time
+import httplib2
 import comment_threads
 import channels
 import playlist
@@ -42,17 +44,20 @@ def start(youtube,CategoryYoutube):
                     tmp = video.get_playlist_items(youtube,j[2],CategoryYoutube)
                     #Output:[title, description, videoPublishedAt,category,lang,tags,contentDetails,contentRating]
                     if tmp:
-                        tmp.append(j[4])
-                        tmp.append(id_liked_video)
-                        videos_info.append(tmp)
+                        tmp.append([j[4],id_liked_video])
+                        videos_info.extend(tmp.copy())
+                        tmp.clear()
+                        #print(videos_info)
                         #if user_radar.start_radar(Counter([j[3] for j in videos_info]), i[1],CategoryYoutube):
                         #print("Radar Chart created")
-                os.makedirs("data/"+i[1])
-                save_list("data/"+i[1]+'/'+str(datetime.date.today()),videos_info)
-                videos_info.clear()
-                tmp.clear()
-    except Exception as e:
+                if videos_info:
+                    os.makedirs("data/"+i[1])
+                    save_list("data/"+i[1]+'/'+str(datetime.date.today()),videos_info)
+                    videos_info.clear()
+    except httplib2.ServerNotFoundError as e:
         print(e)
+        time.sleep(10)
+
 
 def last_file(directory):
     for (root, dirnames, files) in os.walk("data/"+directory):
@@ -92,5 +97,6 @@ def each_day(youtube,CategoryYoutube):
                     else:
                         print("File: ",name," has been checked!")
                         break
-                except Exception as e:
+                except httplib2.ServerNotFoundError as e:
                     print(e)
+                    time.sleep(10)

@@ -1,4 +1,4 @@
-#Output:title, description, id_video, videoPublishedAt, like_data
+# Output:title, description, id_video, videoPublishedAt, like_data
 def get_playlist_items(youtube, id_playlist):
     list_item = []
     response = youtube.playlistItems().list(
@@ -7,6 +7,9 @@ def get_playlist_items(youtube, id_playlist):
         part='snippet,contentDetails'
     ).execute()
     if response:
+        if 'error' in response.keys():
+            print("Playlist not found")
+            return list_item
         for item in response["items"]:
             title = item["snippet"]["title"]
             if title != "Deleted video" and title != "Private video":
@@ -26,7 +29,7 @@ def get_playlist_items(youtube, id_playlist):
             ).execute()
             for item in response["items"]:
                 title = item["snippet"]["title"]
-                if title != "Deleted video" and title != "Private video": # otherwise i cannot get videoPublishedAt and other info
+                if title != "Deleted video" and title != "Private video":  # otherwise i cannot get videoPublishedAt and other info
                     description = item["snippet"]["description"]
                     like_data = item["snippet"]["publishedAt"]
                     videoPublishedAt = item["contentDetails"]["videoPublishedAt"]
@@ -36,8 +39,8 @@ def get_playlist_items(youtube, id_playlist):
         return list_item
 
 
-
-def get_new_items(youtube,id_playlist,last_datetime):
+def get_new_items(youtube, id_playlist, last_datetime):
+    print(id_playlist)
     list_item = []
     response = youtube.playlistItems().list(
         playlistId=id_playlist,
@@ -69,7 +72,7 @@ def get_new_items(youtube,id_playlist,last_datetime):
             ).execute()
             for item in response["items"]:
                 like_data = item["snippet"]["publishedAt"]
-                print(like_data,last_datetime)
+                print(like_data, last_datetime)
                 if like_data > last_datetime:
                     print("New video")
                     description = item["snippet"]["description"]

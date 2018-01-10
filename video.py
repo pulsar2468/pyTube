@@ -10,7 +10,7 @@ def get_playlist_items(youtube, id_videos,videoCategory):
     ).execute()
     if response["items"]: 
         item=response["items"][0]
-        title = item["snippet"]["title"].encode('utf-8')
+        title = item["snippet"]["title"]
         if title != "Deleted video" and title != "Private video" and title:
             if "lang" in item.keys():
                 lang=item["snippet"]["defaultLanguage"]
@@ -25,8 +25,8 @@ def get_playlist_items(youtube, id_videos,videoCategory):
                     break
 
             if "tags" in item.keys():
-                tags=item["snippet"]["tags"].encode('utf-8')
-            description = item["snippet"]["description"].encode('utf-8')
+                tags=item["snippet"]["tags"]
+            description = item["snippet"]["description"]
             videoPublishedAt = item["snippet"]["publishedAt"]
 
             return [title, description, videoPublishedAt,category,lang,tags,contentDetails,contentRating]
