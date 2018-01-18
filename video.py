@@ -3,11 +3,16 @@ def get_playlist_items(youtube, id_videos,videoCategory):
     lang=None
     tags=None
     contentRating=None
-    response = youtube.videos().list(
-        id=id_videos,
-        maxResults="50",
-        part='snippet,contentDetails'
-    ).execute()
+    while True:
+        try:
+            response = youtube.videos().list(
+                id=id_videos,
+                maxResults="50",
+                part='snippet,contentDetails'
+            ).execute()
+            break
+        except Exception as e:
+            print(e)
     if response["items"]: 
         item=response["items"][0]
         title = item["snippet"]["title"]

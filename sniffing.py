@@ -31,7 +31,7 @@ def open_dataset(name):
 
 def start(youtube,CategoryYoutube):
     videos_info=[]
-    comment_list=comment_threads.get_comments(youtube,'6mTEpicRFwM') #Object,id_video
+    comment_list=comment_threads.get_comments(youtube,'6I9NdCcHRkQ') #Object,id_video
     print("Comment catched: ",len(comment_list))
     try:
         for i in comment_list:
@@ -44,8 +44,9 @@ def start(youtube,CategoryYoutube):
                     tmp = video.get_playlist_items(youtube,j[2],CategoryYoutube)
                     #Output:[title, description, videoPublishedAt,category,lang,tags,contentDetails,contentRating]
                     if tmp:
-                        tmp.append([j[4],id_liked_video])
-                        videos_info.extend(tmp.copy())
+                        tmp.append(j[4])
+                        tmp.append(id_liked_video)
+                        videos_info.append(tmp.copy())
                         tmp.clear()
                         #print(videos_info)
                         #if user_radar.start_radar(Counter([j[3] for j in videos_info]), i[1],CategoryYoutube):
@@ -53,15 +54,40 @@ def start(youtube,CategoryYoutube):
                 if videos_info:
                     os.makedirs("data/"+i[1])
                     save_list("data/"+i[1]+'/'+str(datetime.date.today()),videos_info)
+                    #print(videos_info)
                     videos_info.clear()
-    except httplib2.ServerNotFoundError as e:
+    except (httplib2.ServerNotFoundError,TimeoutError) as e:
         print(e)
+        print("I will try to get user: ",i[1])
+        i=comment_threads[comment_list.index(i)-1]
+        videos_info.clear()
         time.sleep(10)
 
 
-def last_file(directory):
+def get_file(directory,action):
+    str_date=None
     for (root, dirnames, files) in os.walk("data/"+directory):
-        return files[len(files)-1]
+        date=(os.stat(root+'/'+files[0])).st_mtime
+        str_date=files[0]
+        if len(files) == 1: return files[0]
+        else:
+            if action:
+                for i in files:
+                    stat_buf=os.stat(root+'/'+i)
+                    tmp=stat_buf.st_mtime
+                    if date < tmp:
+                        date=tmp
+                        str_date=i
+
+            else:
+                for i in files:
+                    stat_buf=os.stat(root+'/'+i)
+                    tmp=stat_buf.st_mtime
+                    if date > tmp:
+                        date=tmp
+                        str_date=i
+
+        return str_date
 
 
 def each_day(youtube,CategoryYoutube):
@@ -72,7 +98,7 @@ def each_day(youtube,CategoryYoutube):
         for name in dirnames:
             while True:
                 try:
-                    l_file=last_file(name)
+                    l_file=get_file(name,1)
                     if l_file and not os.path.exists("data/"+name+'/'+str(today)):
                         load_list=open_dataset("data/"+name+'/'+l_file)
                         print("Analyse user: ",name)
@@ -97,6 +123,6 @@ def each_day(youtube,CategoryYoutube):
                     else:
                         print("File: ",name," has been checked!")
                         break
-                except httplib2.ServerNotFoundError as e:
+                except (httplib2.ServerNotFoundError,TimeoutError) as e:
                     print(e)
                     time.sleep(10)

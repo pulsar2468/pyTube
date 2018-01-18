@@ -34,7 +34,7 @@ while True:
         youtube=get_authenticated_service()
         CategoryYoutube=videoCategory.get_playlist_items(youtube) #Category list from Youtube
         break
-    except httplib2.ServerNotFoundError as e:
+    except (httplib2.ServerNotFoundError,TimeoutError) as e:
         print(e)
         time.sleep(10)
 
